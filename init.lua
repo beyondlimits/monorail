@@ -1,4 +1,4 @@
-local version = "0.0.5"
+local version = "0.0.16"
 sliders_gravity = -6
 
 local min_speed_jitter = 0.05
@@ -448,4 +448,4 @@ minetest.register_entity(":pushable_block:moveblock_ent",
 	})
 
 
-print("pushable block " .. version .. " mod loaded")
+print("monorail " .. version .. " mod loaded")
