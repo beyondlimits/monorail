@@ -10,7 +10,7 @@ function cart_onpunch_handler(self,hitter)
 	local own_pos = self.object:getpos()
 	local hitterpos = hitter:getpos()
 
-	local distance = pushable_block_calc_distance(own_pos,hitterpos)
+	local distance = monorail_calc_distance(own_pos,hitterpos)
 	--print("Distance: " .. distance .. " linkedplayer=" .. dump(self.linkedplayer))
 
 	if (distance > 1.5) and
@@ -32,15 +32,15 @@ function cart_onpunch_handler(self,hitter)
 end
 
 
-local texture = "pushable_block_cart_mesh.png"
-local model = "pushable_block_cart.b3d"
+local texture = "monorail_cart_mesh.png"
+local model = "monorail_cart.b3d"
 
 if minetest.is_yes(minetest.setting_get("monorail_carts_mimicry")) then
-	texture = "pushable_block_pa_cart.png"
-	model = "pushable_block_pa_cart.x"
+	texture = "monorail_pa_cart.png"
+	model = "monorail_pa_cart.x"
 end
 
-minetest.register_entity(":pushable_block:cart_ent", {
+minetest.register_entity(":monorail:cart_ent", {
 	physical = true,
 	collisionbox = {-0.5,-0.5,-0.5, 0.5,0.5,0.5},
 	visual = "mesh",
@@ -78,7 +78,7 @@ minetest.register_entity(":pushable_block:cart_ent", {
 
 	on_rightclick = function(self,clicker)
 		--print("Info: "..detect_slider_type(self.object:getpos()).. " :",self.moving_up)
-		clicker:get_inventory():add_item("main", "pushable_block:cart")
+		clicker:get_inventory():add_item("main", "monorail:cart")
 		self.object:remove()
 	end,
 

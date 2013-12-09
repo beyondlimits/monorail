@@ -10,7 +10,7 @@ function transport_cart_onpunch_handler(self,hitter)
 	local own_pos = self.object:getpos()
 	local hitterpos = hitter:getpos()
 
-	local distance = pushable_block_calc_distance(own_pos,hitterpos)
+	local distance = monorail_calc_distance(own_pos,hitterpos)
 	local playername = hitter:get_player_name()
 
 	if (distance <= 1.5) then
@@ -31,7 +31,7 @@ end
 --! return true/false if this form is handled by this handler or not
 -------------------------------------------------------------------------------
 function transport_cart_button_handler(player, formname, fields)
-	if formname == "pushable_block_rightclick:main" then
+	if formname == "monorail_rightclick:main" then
 		for k,v in pairs(fields) do
 			local parts = string.split(k,"_")
 
@@ -39,11 +39,11 @@ function transport_cart_button_handler(player, formname, fields)
 				local tansport_cart_store_id = parts[2]
 				local todo = parts[3]
 
-				local cart = pushable_block_global_data_get(tansport_cart_store_id)
+				local cart = monorail_global_data_get(tansport_cart_store_id)
 
 				if cart ~= nil then
 					local playername = player:get_player_name()
-					local distance = pushable_block_calc_distance(cart.object:getpos(),player:getpos())
+					local distance = monorail_calc_distance(cart.object:getpos(),player:getpos())
 
 					if distance > 4 then
 						minetest.chat_send_player(playername, "Too far away from transport cart")
@@ -53,7 +53,7 @@ function transport_cart_button_handler(player, formname, fields)
 					if todo == "take" and
 						cart.inventory:is_empty("main") then
 						--print("Info: "..detect_slider_type(self.object:getpos()).. " :",self.moving_up)
-						player:get_inventory():add_item("main", "pushable_block:transport_cart")
+						player:get_inventory():add_item("main", "monorail:transport_cart")
 						cart.object:remove()
 					end
 
@@ -74,15 +74,15 @@ end
 
 minetest.register_on_player_receive_fields(transport_cart_button_handler)
 
-local texture = "pushable_block_transport_cart_mesh.png"
-local model = "pushable_block_transport_cart.b3d"
+local texture = "monorail_transport_cart_mesh.png"
+local model = "monorail_transport_cart.b3d"
 
 if minetest.is_yes(minetest.setting_get("monorail_carts_mimicry")) then
-	texture = "pushable_block_pa_cart.png"
-	model = "pushable_block_pa_cart.x"
+	texture = "monorail_pa_cart.png"
+	model = "monorail_pa_cart.x"
 end
 
-minetest.register_entity(":pushable_block:transport_cart_ent", {
+minetest.register_entity(":monorail:transport_cart_ent", {
 	physical = true,
 	collisionbox = {-0.5,-0.5,-0.5, 0.5,0.5,0.5},
 	visual = "mesh",
@@ -130,7 +130,7 @@ minetest.register_entity(":pushable_block:transport_cart_ent", {
 	on_rightclick = function(self,clicker)
 
 		--get rightclick storage id
-		local storage_id = pushable_block_global_data_store(self)
+		local storage_id = monorail_global_data_store(self)
 		local y_pos = 0.25
 		local buttons = ""
 
@@ -153,7 +153,7 @@ minetest.register_entity(":pushable_block:transport_cart_ent", {
 
 		if playername ~= nil then
 			--TODO start form close timer
-			minetest.show_formspec(playername,"pushable_block_rightclick:main",formspec)
+			minetest.show_formspec(playername,"monorail_rightclick:main",formspec)
 		end
 		return true
 	end,

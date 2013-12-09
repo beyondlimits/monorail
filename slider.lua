@@ -9,7 +9,7 @@
 -------------------------------------------------------------------------------
 function get_ground_level(pos)
 
-    local current_pos =round_pos(pos)
+    local current_pos =vector.round(pos)
 
     local tested_node = minetest.env:get_node(current_pos)
 
@@ -41,12 +41,12 @@ function get_ground_level_x(pos)
 	   {x=-0.5,z=0}
 	}
 
-    local current_ground_level = round_pos(pos)
+    local current_ground_level = vector.round(pos)
 
 
     for i=1, #dirs do
 
-        local current_pos = round_pos({x=pos.x+dirs[i].x,y=pos.y+2,z=pos.z+dirs[i].z})
+        local current_pos = vector.round({x=pos.x+dirs[i].x,y=pos.y+2,z=pos.z+dirs[i].z})
 
         local tested_node = minetest.env:get_node(current_pos)
 
@@ -75,8 +75,8 @@ end
 function is_slider(name)
 	if 	name == monorail_basic_slider or
 		name == monorail_basic_slider:sub(2) or
-		name == "pushable_block:break" or
-		name == "pushable_block:booster" then
+		name == "monorail:break" or
+		name == "monorail:booster" then
 		return true
 	end
 
@@ -93,7 +93,7 @@ end
 -------------------------------------------------------------------------------
 function is_booster(name)
 
-    if  name == "pushable_block:booster" then
+    if  name == "monorail:booster" then
         return true
     end
 
@@ -110,7 +110,7 @@ end
 -------------------------------------------------------------------------------
 function is_break(name)
 
-    if  name == "pushable_block:break" then
+    if  name == "monorail:break" then
         return true
     end
 
@@ -127,7 +127,7 @@ end
 -------------------------------------------------------------------------------
 function is_accelerator(name)
 
-    if  name == "pushable_block:accelerator_on" then
+    if  name == "monorail:accelerator_on" then
         return true
     end
 
@@ -670,17 +670,17 @@ end
 --! @return true/false
 -------------------------------------------------------------------------------
 function switch_enabled(pos)
-    local node = minetest.env:get_node(round_pos(pos))
+    local node = minetest.env:get_node(vector.round(pos))
 
     if node == nil then
-        --print("no switch found around " .. printpos(round_pos(pos)) .. " -->false")
+        --print("no switch found around " .. printpos(vector.round(pos)) .. " -->false")
         return false
     else
-	    if node.name == "pushable_block:switch_on" then
+	    if node.name == "monorail:switch_on" then
 	        return true
 	    end
 
-	    if node.name == "pushable_block:switch_on" then
+	    if node.name == "monorail:switch_on" then
 	        return true
 	    end
 	end
@@ -697,12 +697,12 @@ end
 function ontrack(pos)
     local current_node =  minetest.env:get_node(pos)
     if is_slider(current_node.name) then
-        if round_pos(pos).x == pos.x then
+        if vector.round(pos).x == pos.x then
             print("ontrack : z")
             return "z"
         end
 
-        if round_pos(pos).z == pos.z then
+        if vector.round(pos).z == pos.z then
             print("ontrack : x")
             return "x"
         end
@@ -725,24 +725,24 @@ end
 function mesecon_detector(pos,node_x_prev,node_x_next,node_z_prev,node_z_next)
 	local newpos = nil
 
-	if node_x_prev ~= nil and node_x_prev.name == "pushable_block:cart_detector_off" then
+	if node_x_prev ~= nil and node_x_prev.name == "monorail:cart_detector_off" then
 		newpos = {x=pos.x-1,y=pos.y,z=pos.z}
 	end
 
-	if node_x_next ~= nil and node_x_next.name == "pushable_block:cart_detector_off" then
+	if node_x_next ~= nil and node_x_next.name == "monorail:cart_detector_off" then
 		newpos = {x=pos.x+1,y=pos.y,z=pos.z}
 	end
 
-	if node_z_prev ~= nil and node_z_prev.name == "pushable_block:cart_detector_off" then
+	if node_z_prev ~= nil and node_z_prev.name == "monorail:cart_detector_off" then
 		newpos = {x=pos.x,y=pos.y,z=pos.z-1}
 	end
 
-	if node_z_next ~= nil and node_z_next.name == "pushable_block:cart_detector_off" then
+	if node_z_next ~= nil and node_z_next.name == "monorail:cart_detector_off" then
 		newpos = {x=pos.x,y=pos.y,z=pos.z+1}
 	end
 
 	if newpos ~= nil then
-		minetest.env:add_node(newpos,{name="pushable_block:cart_detector_on"})
+		minetest.env:add_node(newpos,{name="monorail:cart_detector_on"})
 		mesecon:receptor_on(newpos, mesecon.rules.default)
 		pb_debug_lvl2("enabling mesecon detector at: " .. printpos(newpos))
 	end

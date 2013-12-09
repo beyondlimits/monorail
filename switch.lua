@@ -1,14 +1,14 @@
-minetest.register_node("pushable_block:switch_on", {
+minetest.register_node("monorail:switch_on", {
 	description = "Monorail switch (On)",
     paramtype2 = "facedir",
-    tiles = {"pushable_block_switch_on_top.png","pushable_block_switch_on_top.png","pushable_block_switch_on.png"},
-    drop = "pushable_block:switch_off",
+    tiles = {"monorail_switch_on_top.png","monorail_switch_on_top.png","monorail_switch_on.png"},
+    drop = "monorail:switch_off",
     groups = {bendy=2, snappy=1, dig_immediate=2},
     on_punch = function(pos, node, puncher)
-        node.name = "pushable_block:switch_off"
+        node.name = "monorail:switch_off"
         minetest.env:set_node(pos, node)
     end,
-    
+
     drawtype = "nodebox",
     paramtype = "light",
     node_box = {
@@ -28,24 +28,24 @@ minetest.register_node("pushable_block:switch_on", {
         }
     },
     walkable = false,
-    
+
     mesecons = { conductor = {
 				state = "on",
-				onstate = "pushable_block:switch_off",
+				onstate = "monorail:switch_off",
 				} }
 })
 
-minetest.register_node("pushable_block:switch_off", {
+minetest.register_node("monorail:switch_off", {
 	description = "Monorail switch (Off)",
     paramtype2 = "facedir",
-    tiles = {"pushable_block_switch_off_top.png","pushable_block_switch_off_top.png","pushable_block_switch_off.png"},
-    drop = "pushable_block:switch_off",
+    tiles = {"monorail_switch_off_top.png","monorail_switch_off_top.png","monorail_switch_off.png"},
+    drop = "monorail:switch_off",
     groups = {bendy=2, snappy=1, dig_immediate=2},
     on_punch = function(pos, node, puncher)
-        node.name = "pushable_block:switch_on"
+        node.name = "monorail:switch_on"
         minetest.env:set_node(pos, node)
     end,
-    
+
     drawtype = "nodebox",
     paramtype = "light",
     node_box = {
@@ -65,9 +65,9 @@ minetest.register_node("pushable_block:switch_off", {
         }
     },
     walkable = false,
-    
+
     mesecons = { conductor = {
 				state = "off",
-				onstate = "pushable_block:switch_on",
+				onstate = "monorail:switch_on",
 				} }
 })

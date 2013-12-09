@@ -437,7 +437,7 @@ function monorail_cart.handle_curve(self,current_state)
 	local handled = false
 
 	--check if we didn't already handle this curve
-	if not pushable_block_samepos(self.last_switch_pos,round_pos(current_state.pos)) then
+	if not monorail_samepos(self.last_switch_pos,vector.round(current_state.pos)) then
 
 		--reset position of last curve
 		self.last_switch_pos = nil
@@ -460,7 +460,7 @@ function monorail_cart.handle_curve(self,current_state)
 
 		if handled then
 			pb_debug_lvl2("Curve detected: " .. current_state.slidertype)
-			self.last_switch_pos = round_pos(current_state.pos)
+			self.last_switch_pos = vector.round(current_state.pos)
 		end
 	end
 
@@ -678,12 +678,12 @@ function monorail_cart.sound_handler(self,velocity,acceleration)
 	if minetest.is_yes(minetest.setting_get("monorail_carts_mimicry")) then
 		return
 	end
-	if not pushable_block_pos_is_null(velocity) or
-	   not pushable_block_pos_is_null(acceleration) then
+	if not monorail_pos_is_null(velocity) or
+	   not monorail_pos_is_null(acceleration) then
 		if self.soundhandle_moving == nil then
 			self.soundhandle_moving = minetest.sound_play({
 					object = self.object,
-					name="pushable_block_cart_moving",
+					name="monorail_cart_moving",
 					gain = 1,
 					max_hear_distance = 10,
 					loop = true,
@@ -770,7 +770,7 @@ function monorail_cart.punch_move(self,own_pos,hitterpos)
     local current_velocity = self.object:getvelocity()
     local speed_change = calc_accel_on_sliders(own_pos,hitterpos)
 
-    local cleant_pos = round_pos(own_pos)
+    local cleant_pos = vector.round(own_pos)
 
     if speed_change.z == 0 then
         self.object:moveto(cleant_pos)
