@@ -13,7 +13,7 @@ function get_ground_level(pos)
 
     local tested_node = minetest.env:get_node(current_pos)
 
-    
+
 
     while tested_node ~= nil and tested_node.name == "air" do
         current_pos = {x=current_pos.x,y=current_pos.y -1,z=current_pos.z}
@@ -33,7 +33,7 @@ end
 -- retval: position of ground level slider
 -------------------------------------------------------------------------------
 function get_ground_level_x(pos)
-	
+
 	local dirs = {
 	   {x=0,z=0.5},
 	   {x=0,z=-0.5},
@@ -42,24 +42,24 @@ function get_ground_level_x(pos)
 	}
 
     local current_ground_level = round_pos(pos)
-    
-    
+
+
     for i=1, #dirs do
-    
+
         local current_pos = round_pos({x=pos.x+dirs[i].x,y=pos.y+2,z=pos.z+dirs[i].z})
-        
+
         local tested_node = minetest.env:get_node(current_pos)
 
         while tested_node ~= nil and tested_node.name == "air" do
             current_pos = {x=current_pos.x,y=current_pos.y -1,z=current_pos.z}
             tested_node = minetest.env:get_node(current_pos)
-            
+
             if current_pos.y > current_ground_level.y then
                 current_ground_level = current_pos
             end
         end
     end
-    
+
 	return {x=pos.x,y=current_ground_level.y,z=pos.z}
 end
 
@@ -73,7 +73,8 @@ end
 -- retval: true/false
 -------------------------------------------------------------------------------
 function is_slider(name)
-	if 	name == "pushable_block:slider" or
+	if 	name == monorail_basic_slider or
+		name == monorail_basic_slider:sub(2) or
 		name == "pushable_block:break" or
 		name == "pushable_block:booster" then
 		return true
@@ -143,11 +144,11 @@ end
 function get_boost(speed,pos)
 
 	local node_at_pos = minetest.env:get_node(pos)
-		
+
 	local x_accel = 0
 	local z_accel = 0
-	
-	
+
+
 
 	if  node_at_pos ~= nil and
 		is_booster(node_at_pos.name) then
@@ -165,12 +166,12 @@ function get_boost(speed,pos)
 		if speed.z < 0 then
 			z_accel = -5
 		end
-		
+
 		if speed.z > 0 then
 			z_accel = 5
 		end
 	end
-	
+
 	if  node_at_pos ~= nil and
         is_break(node_at_pos.name) then
 
@@ -187,7 +188,7 @@ function get_boost(speed,pos)
         if speed.z < 0 then
             z_accel = 5
         end
-        
+
         if speed.z > 0 then
             z_accel = -5
         end
@@ -220,7 +221,7 @@ function detect_slider_type(pos,cartdir)
 		current_node.name ~= "air" then
 		print("not on slider:"..current_node.name)
 		return "inv"
-	end 
+	end
 
 	local node_x_prev = minetest.env:get_node({x=pos.x-1,y=pos.y,z=pos.z})
 	local node_x_next = minetest.env:get_node({x=pos.x+1,y=pos.y,z=pos.z})
@@ -231,14 +232,14 @@ function detect_slider_type(pos,cartdir)
 	local node_x_next_above = minetest.env:get_node({x=pos.x+1,y=pos.y+1,z=pos.z})
 	local node_z_prev_above = minetest.env:get_node({x=pos.x,y=pos.y+1,z=pos.z-1})
 	local node_z_next_above = minetest.env:get_node({x=pos.x,y=pos.y+1,z=pos.z+1})
-	
+
     local node_x_prev_below = minetest.env:get_node({x=pos.x-1,y=pos.y-1,z=pos.z})
     local node_x_next_below = minetest.env:get_node({x=pos.x+1,y=pos.y-1,z=pos.z})
     local node_z_prev_below = minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z-1})
     local node_z_next_below = minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z+1})
 
 	local node_below        = minetest.env:get_node({x=pos.x,y=pos.y-1,z=pos.z})
-	
+
 	--this does only work if guaranteed detect_slider is only called with current pos of cart
 	mesecon_detector(pos,node_x_prev,node_x_next,node_z_prev,node_z_next)
 
@@ -274,7 +275,7 @@ function detect_slider_type(pos,cartdir)
 		return "in_air"
 	end
 
-	
+
 	if node_x_prev_above ~= nil and
 		is_slider(node_x_prev_above.name) then
 		return "x-u"
@@ -295,9 +296,9 @@ function detect_slider_type(pos,cartdir)
 
 		return "z+u"
 	end
-	
+
 	if (cartdir ~= nil) then
-	
+
 	    local switches_retval = handle_switches(pos,cartdir,
 	                   node_z_prev,
                         node_z_next,
@@ -321,15 +322,15 @@ function detect_slider_type(pos,cartdir)
                                         node_x_next_below,
                                         node_z_prev_below,
                                         node_z_next_below)
-                                        
-                                        
+
+
     if curves_retval ~= nil then
         return curves_retval
     end
 
     local retval_accelerator = handle_accelerator(node_x_prev,node_x_next,
                                                     node_z_prev, node_z_next)
-                                                    
+
     if retval_accelerator ~= nil then
         return retval_accelerator
     end
@@ -358,7 +359,7 @@ end
 -- name: handle_accelerator(node_x_prev,node_x_next,node_z_prev, node_x_prev)
 --
 --! @brief find direction of accelerator
---! @param 
+--! @param
 --
 --! @return direction to move
 -------------------------------------------------------------------------------
@@ -373,30 +374,30 @@ function handle_accelerator(node_x_prev,node_x_next,node_z_prev, node_z_next)
 		node_x_next ~= nil and
 		is_slider(node_x_prev.name) and
 		is_accelerator(node_x_next.name) then
-		return "x-a" 
+		return "x-a"
 	end
-	
+
 	if node_x_next ~= nil and
 		node_x_prev ~= nil and
 		is_slider(node_x_next.name) and
 		is_accelerator(node_x_prev.name) then
-		return "x+a" 
+		return "x+a"
 	end
-	
+
 	if node_z_prev ~= nil and
 		node_z_next ~= nil and
 		is_slider(node_z_prev.name) and
 		is_accelerator(node_z_next.name) then
-		return "z-a" 
+		return "z-a"
 	end
-	
+
 	if node_z_next ~= nil and
 		node_z_prev ~= nil and
 		is_slider(node_z_next.name) and
 		is_accelerator(node_z_prev.name) then
-		return "z+a" 
+		return "z+a"
 	end
-	
+
 	return nil
 end
 
@@ -425,25 +426,25 @@ function handle_switches(pos,cartdir,
                         node_x_next_below,
                         node_z_prev_below,
                         node_z_next_below)
-                        
+
     --t-junctions
     if ((node_z_prev ~= nil and is_slider(node_z_prev.name)) or
-        (node_z_prev_below ~= nil and is_slider(node_z_prev_below.name))) 
+        (node_z_prev_below ~= nil and is_slider(node_z_prev_below.name)))
        and
        ((node_z_next ~= nil and is_slider(node_z_next.name)) or
         (node_z_next_below ~= nil and is_slider(node_z_next_below.name)))
-       and 
+       and
        ((node_x_next ~= nil and is_slider(node_x_next.name)) or
         (node_x_next_below ~= nil and is_slider(node_x_next_below.name))
        ) then
-        
+
         if switch_enabled({x=pos.x-1,y=pos.y,z=pos.z}) then
            --print("switch was enabled")
             if cartdir.x < 0 then
                 --print("cartdir.x < 0 -->z+")
                 return "z+"
             end
-            
+
             --print("-->z")
             return "z"
         else
@@ -453,18 +454,18 @@ function handle_switches(pos,cartdir,
                 --print("cartdir.z > 0 -->x+")
                 return "x+"
             end
-            
+
             --running into switch from wrong side
             if cartdir.z < 0 then
                 --print("cartdir.z < 0 -->z+")
                 return "z+"
             end
-            
+
             if cartdir.x < 0 then
                 --print("cartdir.x < 0 -->x+")
                 return "x+"
             end
-            
+
             return "x"
         end
     end
@@ -474,7 +475,7 @@ function handle_switches(pos,cartdir,
        and
        ((node_z_next ~= nil and is_slider(node_z_next.name)) or
         (node_z_next_below ~= nil and is_slider(node_z_next_below.name)))
-       and 
+       and
        ((node_x_prev ~= nil and is_slider(node_x_prev.name)) or
         (node_x_prev_below ~= nil and is_slider(node_x_prev_below.name))
        ) then
@@ -484,7 +485,7 @@ function handle_switches(pos,cartdir,
                 --print("cartdir.x > 0 -->x-")
                 return "x-"
             end
-            
+
             --print("-->z")
             return "z"
         else
@@ -494,28 +495,28 @@ function handle_switches(pos,cartdir,
                 --print("cartdir.z < 0 -->x-")
                 return "z-"
             end
-            
+
             --running into switch from wrong side
             if cartdir.z > 0 then
                 --print("cartdir.z < 0 -->x-")
                 return "x-"
             end
-            
+
             if cartdir.x > 0 then
                 --print("cartdir.x > 0 -->z-")
                 return "z-"
             end
-            
+
             return "x"
         end
     end
-    
+
     if ((node_x_prev ~= nil and is_slider(node_x_prev.name)) or
         (node_x_prev_below ~= nil and is_slider(node_x_prev_below.name)))
        and
        ((node_x_next ~= nil and is_slider(node_x_next.name)) or
         (node_x_next_below ~= nil and is_slider(node_x_next_below.name)))
-       and 
+       and
        ((node_z_prev ~= nil and is_slider(node_z_prev.name)) or
         (node_z_prev_below ~= nil and is_slider(node_z_prev_below.name))
        ) then
@@ -525,7 +526,7 @@ function handle_switches(pos,cartdir,
                 --print("cartdir.z > 0 -->x+")
                 return "x+"
             end
-            
+
             --print("-->x")
             return "x"
         else
@@ -535,28 +536,28 @@ function handle_switches(pos,cartdir,
                 --print("cartdir.z > 0 -->x-")
                 return "x-"
             end
-            
+
             --running into switch from wrong side
             if cartdir.x < 0 then
                 --print("cartdir.x < 0 -->x+")
                 return "x+"
             end
-            
+
             if cartdir.z > 0 then
                 --print("cartdir.z > 0 -->x-")
                 return "x-"
             end
-            
+
             return "z"
         end
     end
-    
+
     if ((node_x_prev ~= nil and is_slider(node_x_prev.name)) or
         (node_x_prev_below ~= nil and is_slider(node_x_prev_below.name)))
        and
        ((node_x_next ~= nil and is_slider(node_x_next.name)) or
         (node_x_next_below ~= nil and is_slider(node_x_next_below.name)))
-       and 
+       and
        ((node_z_next ~= nil and is_slider(node_z_next.name)) or
         (node_z_next_below ~= nil and is_slider(node_z_next_below.name))
        ) then
@@ -566,29 +567,29 @@ function handle_switches(pos,cartdir,
                 --print("cartdir.z < 0 -->x+")
                 return "z-"
             end
-            
+
             --print("-->x")
             return "x"
         else
             --print("switch was disabled")
-            
+
             --running into switch from wrong side
             if cartdir.x > 0 then
                 --print("cartdir.z < 0 -->z-")
                 return "z-"
             end
-            
+
             --switching direction
             if cartdir.x < 0 then
                 --print("cartdir.x > 0 -->z+")
                 return "z+"
             end
-            
+
             if cartdir.z < 0 then
                 --print("cartdir.z < 0 -->z+")
                 return "z+"
             end
-            
+
             return "z"
         end
     end
@@ -620,7 +621,7 @@ function handle_curves(node_z_prev,
                         node_x_next_below,
                         node_z_prev_below,
                         node_z_next_below)
-                        
+
     if (node_z_prev ~= nil and is_slider(node_z_prev.name)) and (
        (node_x_next ~= nil and is_slider(node_x_next.name)) or
        (node_x_next_below ~= nil and is_slider(node_x_next_below.name))
@@ -634,14 +635,14 @@ function handle_curves(node_z_prev,
         ) then
         return "x-"
     end
-    
+
     if (node_z_next ~= nil and is_slider(node_z_next.name)) and (
        (node_x_prev ~= nil and is_slider(node_x_prev.name)) or
        (node_x_prev_below ~= nil and is_slider(node_x_prev_below.name))
         ) then
         return "z-"
     end
-    
+
 --    print("xnext: " .. node_x_next.name .. " " ..
 --          "xprev: " .. node_x_prev.name .. " " ..
 --          "znext: " .. node_z_next.name .. " " ..
@@ -670,15 +671,15 @@ end
 -------------------------------------------------------------------------------
 function switch_enabled(pos)
     local node = minetest.env:get_node(round_pos(pos))
-    
+
     if node == nil then
         --print("no switch found around " .. printpos(round_pos(pos)) .. " -->false")
         return false
     else
 	    if node.name == "pushable_block:switch_on" then
 	        return true
-	    end 
-	    
+	    end
+
 	    if node.name == "pushable_block:switch_on" then
 	        return true
 	    end
@@ -700,13 +701,13 @@ function ontrack(pos)
             print("ontrack : z")
             return "z"
         end
-        
+
         if round_pos(pos).z == pos.z then
             print("ontrack : x")
             return "x"
         end
     end
-    
+
     return "inv"
 end
 
@@ -723,23 +724,23 @@ end
 -------------------------------------------------------------------------------
 function mesecon_detector(pos,node_x_prev,node_x_next,node_z_prev,node_z_next)
 	local newpos = nil
-	
+
 	if node_x_prev ~= nil and node_x_prev.name == "pushable_block:cart_detector_off" then
 		newpos = {x=pos.x-1,y=pos.y,z=pos.z}
 	end
-	
+
 	if node_x_next ~= nil and node_x_next.name == "pushable_block:cart_detector_off" then
 		newpos = {x=pos.x+1,y=pos.y,z=pos.z}
 	end
-	
+
 	if node_z_prev ~= nil and node_z_prev.name == "pushable_block:cart_detector_off" then
 		newpos = {x=pos.x,y=pos.y,z=pos.z-1}
 	end
-	
+
 	if node_z_next ~= nil and node_z_next.name == "pushable_block:cart_detector_off" then
 		newpos = {x=pos.x,y=pos.y,z=pos.z+1}
 	end
-	
+
 	if newpos ~= nil then
 		minetest.env:add_node(newpos,{name="pushable_block:cart_detector_on"})
 		mesecon:receptor_on(newpos, mesecon.rules.default)

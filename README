@@ -7,8 +7,17 @@ Issuetracker: https://github.com/sapier/monorail/issues
 Documentation: https://forum.minetest.net/viewtopic.php?id=730 
 
 
+Settings:
+monorail_carts_mimicry=false --(set to true if you want monorail to mimicry carts mod)
+
 
 Changes:
 --------------------
+0.0.18:
+Added pa carts mimicry mode
+
+0.0.17:
+Really make this version 0.0.17 not 0.0.5 code
+
 0.0.16:
 Added description and screenshot

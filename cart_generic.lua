@@ -17,7 +17,7 @@ function monorail_cart.precheck_position(self,current_state)
 		current_state.slidertype == "in_air" then
 		--reset moving up flag
 		self.moving_up = false
-		
+
 		--move to last known pos if not end of track
 		if self.last_known_good_pos ~= nil then
 			if not self.end_of_track and
@@ -51,16 +51,16 @@ end
 --! @param current_state current movement state
 -------------------------------------------------------------------------------
 function monorail_cart.align_to_track(self,current_state)
-	if	current_state.slidertype == "x" or 
-		current_state.slidertype == "x+a" or 
+	if	current_state.slidertype == "x" or
+		current_state.slidertype == "x+a" or
 		current_state.slidertype == "x-a" then
 		current_state.pos.z      = math.floor(current_state.pos.z + 0.5)
 		current_state.pos.y      = math.floor(current_state.pos.y + 0.5)
-		current_state.velocity.z = 0 
+		current_state.velocity.z = 0
 	end
-	
-	if	current_state.slidertype == "z" or 
-		current_state.slidertype == "z+a" or 
+
+	if	current_state.slidertype == "z" or
+		current_state.slidertype == "z+a" or
 		current_state.slidertype == "z-a" then
 		current_state.pos.x      = math.floor(current_state.pos.x + 0.5)
 		current_state.pos.y      = math.floor(current_state.pos.y + 0.5)
@@ -78,18 +78,18 @@ end
 -------------------------------------------------------------------------------
 function monorail_cart.update_moving_up_flag(self,slidertype)
 	if	slidertype == "x-u" or
-		slidertype == "x+u" or 
+		slidertype == "x+u" or
 		slidertype == "z-u" or
 		slidertype == "z+u" or
 		slidertype == "x-b" or
-		slidertype == "x+b" or 
+		slidertype == "x+b" or
 		slidertype == "z-b" or
 		slidertype == "z+b" then
-		
-		self.moving_up = true
+
+		--self.moving_up = true
 		--print("Moving up: " .. slidertype)
 	else
-		---print("NOT Moving up: " .. slidertype)
+		--print("NOT Moving up: " .. slidertype)
 		self.moving_up = false
 	end
 end
@@ -107,18 +107,18 @@ end
 function monorail_cart.handle_straight_move_up_down(self,current_state)
 
 	local toinc_y = 0
-	
+
 	--moving from x direction up/down
 	if (current_state.slidertype == "x-u" and current_state.pos.x >= current_state.xpos_rounded) or
-		(current_state.slidertype == "x+u" and 
+		(current_state.slidertype == "x+u" and
 		current_state.pos.x <= current_state.xpos_rounded) then
 		toinc_y = 1 - math.abs((current_state.xpos_rounded - current_state.pos.x) *2)
 		--self.set_animation(self,1)
 		--print("moving x1, velocity: " .. dump(current_state.velocity))
 	end
-	
+
 	if (current_state.slidertype == "x-b" and current_state.pos.x >= current_state.xpos_rounded) or
-		(current_state.slidertype == "x+b" and current_state.pos.x <= current_state.xpos_rounded) then 
+		(current_state.slidertype == "x+b" and current_state.pos.x <= current_state.xpos_rounded) then
 		toinc_y = 1 - math.abs((current_state.pos.x - current_state.xpos_rounded) *2)
 		toinc_y = toinc_y + fix_on_step_move_up_jitter(	current_state.slidertype,
 														current_state.velocity,
@@ -127,16 +127,16 @@ function monorail_cart.handle_straight_move_up_down(self,current_state)
 														current_state.zpos_rounded)
 		--print("moving x2, velocity: " .. dump(current_state.velocity))
 	end
-	
+
 	--moving z direction up/down
 	if (current_state.slidertype == "z-u" and current_state.pos.z >= current_state.zpos_rounded) or
 		(current_state.slidertype == "z+u" and current_state.pos.z <= current_state.zpos_rounded) then
 		toinc_y = 1 - math.abs((current_state.zpos_rounded - current_state.pos.z) *2)
 		--print("moving z1, velocity: " .. dump(current_state.velocity))
 	end
-	
+
 	if (current_state.slidertype == "z-b" and current_state.pos.z >= current_state.zpos_rounded) or
-		(current_state.slidertype == "z+b" and current_state.pos.z <= current_state.zpos_rounded) then 
+		(current_state.slidertype == "z+b" and current_state.pos.z <= current_state.zpos_rounded) then
 		toinc_y = 1 - math.abs((current_state.pos.z - current_state.zpos_rounded) *2)
 		toinc_y = toinc_y + fix_on_step_move_up_jitter(	current_state.slidertype,
 														current_state.velocity,
@@ -145,7 +145,7 @@ function monorail_cart.handle_straight_move_up_down(self,current_state)
 														current_state.zpos_rounded)
 		--print("moving z2, velocity: " .. dump(current_state.velocity))
 	end
-	
+
 	--calculate new y value to set
 	if (toinc_y > 0) then
 		--limit to maximum value
@@ -155,9 +155,9 @@ function monorail_cart.handle_straight_move_up_down(self,current_state)
 		local ground_level = get_ground_level(current_state.pos)
 		--print("Ground level: " .. dump(ground_level))
 		current_state.pos.y = ground_level.y + toinc_y
-		
+
 		--print("moving direction x: " .. current_state.velocity.x .. " slider: " .. current_state.slidertype)
-		
+
 		if current_state.velocity.x ~= 0 then
 			if current_state.velocity.x < 0 then
 				if (current_state.slidertype == "x+b" or
@@ -168,7 +168,7 @@ function monorail_cart.handle_straight_move_up_down(self,current_state)
 				--current_state.slidertype == "x-u"
 					self.set_animation(self,1)
 				end
-				
+
 			else
 				if (current_state.slidertype == "x-b" or
 					current_state.slidertype == "x-u") then
@@ -181,7 +181,7 @@ function monorail_cart.handle_straight_move_up_down(self,current_state)
 			end
 			return true
 		end
-		
+
 		if current_state.velocity.z ~= 0 then
 			if current_state.velocity.z < 0 then
 				if (current_state.slidertype == "z+b" or
@@ -192,7 +192,7 @@ function monorail_cart.handle_straight_move_up_down(self,current_state)
 				--current_state.slidertype == "z-u"
 					self.set_animation(self,1)
 				end
-				
+
 			else
 				if (current_state.slidertype == "z-b" or
 					current_state.slidertype == "z-u") then
@@ -210,7 +210,7 @@ function monorail_cart.handle_straight_move_up_down(self,current_state)
 		--print("not moving up")
 		self.set_animation(self,0)
 	end
-	
+
 	return false
 end
 
@@ -225,15 +225,15 @@ end
 --! @return true/false if handled by this fct
 -------------------------------------------------------------------------------
 function monorail_cart.handle_xpos_curve(self,current_state)
-	if current_state.slidertype == "x+" then	
+	if current_state.slidertype == "x+" then
 		if current_state.pos.z  >= current_state.zpos_rounded and
 			current_state.velocity.z > 0 then
-			
+
 			pb_debug_lvl3("dir change z+ -> x+")
-			
+
 			current_state.velocity.x = math.abs(current_state.velocity.z)
 			current_state.velocity.z = 0
-			
+
 			current_state.pos.z = math.floor(current_state.pos.z + 0.5)
 			monorail_cart.update_orientation(self,current_state,true)
 			return true
@@ -241,10 +241,10 @@ function monorail_cart.handle_xpos_curve(self,current_state)
 			if current_state.pos.x <= current_state.xpos_rounded and
 			current_state.velocity.x < 0 then
 				pb_debug_lvl3("dir change x- -> z-")
-				
+
 				current_state.velocity.z = - math.abs(current_state.velocity.x)
 				current_state.velocity.x = 0
-				
+
 				current_state.pos.x = math.floor(current_state.pos.x + 0.5)
 				monorail_cart.update_orientation(self,current_state,false)
 				return true
@@ -268,24 +268,24 @@ function monorail_cart.handle_xneg_curve(self,current_state)
 	if current_state.slidertype == "x-" then
 		if current_state.pos.z >= current_state.zpos_rounded and
 			current_state.velocity.z > 0 then
-			
+
 			pb_debug_lvl3("dir change z+ ->  x-")
-			
+
 			current_state.velocity.x = - math.abs(current_state.velocity.z)
 			current_state.velocity.z = 0
-			
+
 			current_state.pos.z = math.floor(current_state.pos.z + 0.5)
 			monorail_cart.update_orientation(self,current_state,false)
 			return true
 		else
 			if current_state.pos.x >= current_state.xpos_rounded and
 				current_state.velocity.x > 0 then
-				
+
 				pb_debug_lvl3("dir change x+ -> z-")
-				
+
 				current_state.velocity.z = - math.abs(current_state.velocity.x)
-				current_state.velocity.x = 0 
-				
+				current_state.velocity.x = 0
+
 				current_state.pos.x = math.floor(current_state.pos.x + 0.5)
 				monorail_cart.update_orientation(self,current_state,true)
 				return true
@@ -309,24 +309,24 @@ function monorail_cart.handle_zpos_curve(self,current_state)
 	if current_state.slidertype == "z+" then
 		if current_state.pos.x <= current_state.xpos_rounded and
 			current_state.velocity.x < 0 then
-			
+
 			pb_debug_lvl3("dir change x- -> z+")
-			
+
 			current_state.velocity.z = math.abs(current_state.velocity.x)
 			current_state.velocity.x = 0
-			
+
 			current_state.pos.x = math.floor(current_state.pos.x + 0.5)
 			monorail_cart.update_orientation(self,current_state,true)
 			return true
 		else
 			if current_state.pos.z <= current_state.zpos_rounded and
 				current_state.velocity.z < 0 then
-				
+
 				pb_debug_lvl3("dir change z- -> x+")
-				
+
 				current_state.velocity.x = math.abs(current_state.velocity.z)
 				current_state.velocity.z = 0
-				
+
 				current_state.pos.x = math.floor(current_state.pos.x + 0.5)
 				monorail_cart.update_orientation(self,current_state,true)
 				return true
@@ -350,24 +350,24 @@ function monorail_cart.handle_zneg_curve(self,current_state)
 	if current_state.slidertype == "z-" then
 		if current_state.pos.x >= current_state.xpos_rounded and
 			current_state.velocity.x > 0 then
-			
+
 			pb_debug_lvl3("dir change x+ -> z+")
-			
+
 			current_state.velocity.z = math.abs(current_state.velocity.x)
 			current_state.velocity.x = 0
-			
+
 			current_state.pos.x = math.floor(current_state.pos.x + 0.5)
 			monorail_cart.update_orientation(self,current_state,false)
 			return true
 		else
 			if current_state.pos.z <= current_state.zpos_rounded and
 				current_state.velocity.z < 0 then
-				
+
 				pb_debug_lvl3("dir change z- ->x+")
-				
+
 				current_state.velocity.x = - math.abs(current_state.velocity.z)
 				current_state.velocity.z = 0
-				
+
 				current_state.pos.z = math.floor(current_state.pos.z + 0.5)
 				monorail_cart.update_orientation(self,current_state,false)
 				return true
@@ -386,38 +386,38 @@ end
 -------------------------------------------------------------------------------
 function monorail_cart.update_orientation(self,current_state,direction)
 	local yawmod = (3.14/2)
-	
+
 	if not direction then
 		yawmod =  - (3.14/2)
 	end
-	
+
 	if self.linkedplayer ~= nil and
 		self.linkedplayer:is_player() then
 		local current_yaw = self.linkedplayer:getyaw()
-		
+
 		if current_yaw ~= nil then
 			self.linkedplayer:setyaw(current_yaw + yawmod)
 		end
 	end
-	
+
 	--print("vel: " .. dump(current_state.velocity))
 	local current_yaw = self.object:getyaw()
-	
+
 	if (current_state.velocity.x > 0) and
 		current_yaw ~= 0 then
 		self.object:setyaw(0)
 	end
-	
+
 	if (current_state.velocity.x < 0) and
 		current_yaw ~= math.pi then
 		self.object:setyaw(math.pi)
 	end
-	
+
 	if (current_state.velocity.z > 0) and
 		current_yaw ~= math.pi/2 then
 		self.object:setyaw(0 + math.pi/2)
 	end
-	
+
 	if (current_state.velocity.z < 0) and
 		current_yaw ~= -math.pi/2 then
 		self.object:setyaw(0 - math.pi/2)
@@ -435,29 +435,29 @@ end
 -------------------------------------------------------------------------------
 function monorail_cart.handle_curve(self,current_state)
 	local handled = false
-	
+
 	--check if we didn't already handle this curve
 	if not pushable_block_samepos(self.last_switch_pos,round_pos(current_state.pos)) then
-	
+
 		--reset position of last curve
 		self.last_switch_pos = nil
-	
+
 		if not handled then
 			handled = monorail_cart.handle_xpos_curve(self,current_state)
 		end
-		
+
 		if not handled then
 			handled = monorail_cart.handle_xneg_curve(self,current_state)
 		end
-		
+
 		if not handled then
 			handled = monorail_cart.handle_zpos_curve(self,current_state)
 		end
-		
+
 		if not handled then
 			handled = monorail_cart.handle_zneg_curve(self,current_state)
 		end
-		
+
 		if handled then
 			pb_debug_lvl2("Curve detected: " .. current_state.slidertype)
 			self.last_switch_pos = round_pos(current_state.pos)
@@ -475,32 +475,32 @@ end
 --! @param entity to apply changes
 -------------------------------------------------------------------------------
 function monorail_cart.fix_speed_above_sliders(self,current_state)
-	
+
 	if not monorail_cart.precheck_position(self,current_state) then
 		return
 	end
-	
+
 	--print("slidertype: " .. slidertype .. " velocity: " .. printpos(current_speed) .. " pos: " .. printpos(ownpos))
-	
+
 	monorail_cart.align_to_track(self,current_state)
 	monorail_cart.update_moving_up_flag(self,current_state.slidertype)
-	
+
 	--TODO update function
 	fix_collision_on_move_up(current_state.velocity,self,current_state.slidertype)
 	--print("current_speed: " .. printpos(current_speed))
-	
+
 	--required for some calculations
 	current_state.zpos_rounded = math.floor(current_state.pos.z + 0.5)
 	current_state.xpos_rounded = math.floor(current_state.pos.x + 0.5)
-	
+
 	local handled = false
-	
+
 	handled = monorail_cart.handle_straight_move_up_down(self,current_state)
-	
+
 	if not handled then
 		handled = monorail_cart.handle_curve(self,current_state)
 	end
-	
+
 	--apply changes
 	self.object:moveto(current_state.pos)
 	self.object:setvelocity(current_state.velocity)
@@ -521,19 +521,19 @@ function monorail_cart.get_accelerator(slidertype)
 	if slidertype == "x+a" then
 		return {x=MESE_ACCEL_VALUE,y=0,z=0}
 	end
-	
+
 	if slidertype == "x-a" then
 		return {x=-MESE_ACCEL_VALUE,y=0,z=0}
 	end
-	
+
 	if slidertype == "z+a" then
 		return {x=0,y=0,z=MESE_ACCEL_VALUE}
 	end
-	
+
 	if slidertype == "z-a" then
 		return {x=0,y=0,z=-MESE_ACCEL_VALUE}
 	end
-	
+
 	return {x=0,y=0,z=0}
 end
 
@@ -559,7 +559,7 @@ function monorail_cart.precheck_movement(self,current_state)
 		current_state.mese_accel.z   == 0 then
 		return false
 	end
-	
+
 	return true
 end
 
@@ -581,9 +581,9 @@ function monorail_cart.precheck_acceleration(self,current_state)
 		current_state.velocity.x == 0 and
 		current_state.gravity.x == 0 and
 		current_state.gravity.z == 0 then
-		
-		self.object:setacceleration({x=0,y=current_state.acceleration.y,z=0}) 
-		--print("Block to slow stopping")   
+
+		self.object:setacceleration({x=0,y=current_state.acceleration.y,z=0})
+		--print("Block to slow stopping")
 		return false
 	end
 	return true
@@ -604,34 +604,34 @@ function monorail_cart.calculate_accel(current_state)
 				current_state.gravity.x +
 				current_state.boost.x +
 				current_state.mese_accel.x
-					
+
 	retval.z =	current_state.resistance.z +
 				current_state.friction.z +
 				current_state.gravity.z +
 				current_state.boost.z +
 				current_state.mese_accel.z
-					
+
 	--enforce maximum speed
 	if current_state.velocity.x > MAXIMUM_CART_SPEED and
 		retval.x > 0 then
 		retval.x = 0
 	end
-	
+
 	if current_state.velocity.x < -MAXIMUM_CART_SPEED and
 		retval.x < 0 then
 		retval.x = 0
 	end
-	
+
 	if current_state.velocity.z > MAXIMUM_CART_SPEED and
 		retval.z > 0 then
 		retval.z = 0
 	end
-	
+
 	if current_state.velocity.z < -MAXIMUM_CART_SPEED and
 		retval.z < 0 then
 		retval.z = 0
 	end
-					
+
 	return retval
 end
 -------------------------------------------------------------------------------
@@ -646,21 +646,21 @@ end
 function monorail_cart.fix_speed(self,current_state)
 
 	local speed_fix = false
-	
+
 	--make block stop on beeing to slow
 	if math.abs(current_state.velocity.x) < MIN_SPEED_JITTER then
 		current_state.velocity.x = 0
 		speed_fix = true
 	end
-	
+
 	if math.abs(current_state.velocity.z) < MIN_SPEED_JITTER then
 		current_state.velocity.z = 0
 		speed_fix = true
 	end
-	
+
 	if speed_fix then
 		self.object:setvelocity(current_state.velocity)
-		--print("Fixing speed below threshold") 
+		--print("Fixing speed below threshold")
 	end
 end
 
@@ -675,6 +675,9 @@ end
 --
 -------------------------------------------------------------------------------
 function monorail_cart.sound_handler(self,velocity,acceleration)
+	if minetest.is_yes(minetest.setting_get("monorail_carts_mimicry")) then
+		return
+	end
 	if not pushable_block_pos_is_null(velocity) or
 	   not pushable_block_pos_is_null(acceleration) then
 		if self.soundhandle_moving == nil then
@@ -713,42 +716,42 @@ function monorail_cart.onstep_handler(self, dtime)
 
 	--fix current speed
 	monorail_cart.fix_speed_above_sliders(self,current_state)
-	
+
 	current_state.gravity              = calc_gravity(current_state.slidertype)
 	current_state.mese_accel           = monorail_cart.get_accelerator(current_state.slidertype)
-	
+
 	if not monorail_cart.precheck_movement(self,current_state) then
 		monorail_cart.sound_handler(self,current_state.velocity,{x=0,y=0,z=0})
 		return
 	end
 
 	monorail_cart.fix_speed(self,current_state)
-	
+
 	if not monorail_cart.precheck_acceleration(self,current_state) then
 		monorail_cart.sound_handler(self,current_state.velocity,{x=0,y=0,z=0})
 		return
 	end
-	
+
 	--print("current velocity:" .. printpos(current_state.velocity))
-	
+
 	--calculate acceleration modifiers
 	current_state.resistance        = calc_resistance(current_state.velocity)
 	current_state.friction  = calc_friction(current_state.velocity,current_state.pos)
 	current_state.boost             = get_boost(current_state.velocity,current_state.pos)
-	
+
 	--get new acceleration
 	local new_accel = monorail_cart.calculate_accel(current_state)
-	
+
 	--don't set gravity if currently moving up
 	if self.moving_up then
 		--print("moving up no y acceleration")
 		new_accel.y = 0
 	end
-	
+
 	--print("setting accel:" .. printpos(new_accel))
 	self.object:setacceleration(new_accel)
 	self.object:setvelocity(current_state.velocity)
-	
+
 	monorail_cart.sound_handler(self,current_state.velocity,new_accel)
 	monorail_cart.update_orientation(self,{ velocity=current_state.velocity },nil)
 end
@@ -782,14 +785,14 @@ function monorail_cart.punch_move(self,own_pos,hitterpos)
     end
 
 
-    --print("setting speed by punch: x="..current_velocity.x .. " z="..current_velocity.z .. " dir=".. speed_change.dir)    
-    
+    --print("setting speed by punch: x="..current_velocity.x .. " z="..current_velocity.z .. " dir=".. speed_change.dir)
+
     if speed_change.dir == "inv" or
        speed_change.dir == "in_air" then
          current_velocity = {x = current_velocity.x + speed_change.x, y= current_velocity.y, z = current_velocity.z + speed_change.z}
     end
 
     self.object:setvelocity(current_velocity)
-    
+
     monorail_cart.update_orientation(self,{ velocity=current_velocity },nil)
 end
