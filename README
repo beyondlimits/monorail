@@ -4,7 +4,7 @@ Monorail Mod
 Author: Sapier
 License: WTFP
 Issuetracker: https://github.com/sapier/monorail/issues
-Documentation: https://forum.minetest.net/viewtopic.php?id=730 
+Documentation: https://forum.minetest.net/viewtopic.php?id=730
 
 
 Settings:
@@ -13,6 +13,10 @@ monorail_carts_mimicry=false --(set to true if you want monorail to mimicry cart
 
 Changes:
 --------------------
+0.1.0
+-fixed bug in track detection causing cart to stop on some up/turn tracks
+-internal rename from pushable_block to monorail
+
 0.0.18:
 Added pa carts mimicry mode
 

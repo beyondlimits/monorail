@@ -643,6 +643,17 @@ function handle_curves(node_z_prev,
         return "z-"
     end
 
+
+    if (node_z_prev_below ~= nil and is_slider(node_z_prev_below.name)) and
+       (node_x_next ~= nil and is_slider(node_x_next.name)) then
+        return "x+"
+    end
+
+    if (node_x_prev ~= nil and is_slider(node_x_prev.name)) and
+       (node_z_next_below ~= nil and is_slider(node_z_next_below.name)) then
+        return "z-"
+    end
+
 --    print("xnext: " .. node_x_next.name .. " " ..
 --          "xprev: " .. node_x_prev.name .. " " ..
 --          "znext: " .. node_z_next.name .. " " ..
