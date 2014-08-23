@@ -93,12 +93,13 @@ minetest.register_entity(":monorail:transport_cart_ent", {
 	on_step  = monorail_cart.onstep_handler,
 	on_punch = transport_cart_onpunch_handler,
 
-	on_activate = function(self,staticdata)
+	on_activate = function(self, staticdata)
 		self.object:setacceleration({x=0,y=SLIDERS_GRAVITY,z=0})
 		self.last_speed = self.object:getvelocity()
 		self.object:set_armor_groups(self.groups)
 
-		self.inventoryname = string.gsub(tostring(entity),"table: ","")
+		self.inventoryname = string.gsub(tostring(self),"table: ","")
+		
 
 		self.inventory = minetest.create_detached_inventory(self.inventoryname, nil)
 
@@ -139,12 +140,15 @@ minetest.register_entity(":monorail:transport_cart_ent", {
 		buttons = buttons .. "button_exit[0," .. y_pos .. ";2.5,0.5;" ..
 					"pbrightclick_" .. storage_id .. "_inventory;Content]"
 
-		y_pos = y_pos + 0.75
 
-		buttons = buttons .. "button_exit[0," .. y_pos .. ";2.5,0.5;" ..
-					"pbrightclick_" .. storage_id .. "_take;Take]"
+		if self.inventory:is_empty("main") then
+			y_pos = y_pos + 0.75
+	
+			buttons = buttons .. "button_exit[0," .. y_pos .. ";2.5,0.5;" ..
+						"pbrightclick_" .. storage_id .. "_take;Take]"
+		end
 
-		y_pos = y_pos + 0.75
+		y_pos = y_pos + 0.5
 
 		local y_size = y_pos
 
