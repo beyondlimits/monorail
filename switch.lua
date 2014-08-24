@@ -31,7 +31,7 @@ minetest.register_node("monorail:switch_on", {
 
     mesecons = { conductor = {
 				state = "on",
-				onstate = "monorail:switch_off",
+				offstate = "monorail:switch_off",
 				} }
 })
 

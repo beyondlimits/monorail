@@ -1,4 +1,4 @@
-local version = "0.1.1"
+local version = "0.1.2"
 
 SLIDERS_GRAVITY    = -9.81
 MIN_SPEED_JITTER   = 0.05

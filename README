@@ -13,6 +13,9 @@ monorail_carts_mimicry=false --(set to true if you want monorail to mimicry cart
 
 Changes:
 --------------------
+0.1.2
+-fixed crash on using mesecons (thanks polletfa)
+
 0.1.1
 -fix bug all transport carts having same inventory
 -disallow taking transport cart while inventory not empty

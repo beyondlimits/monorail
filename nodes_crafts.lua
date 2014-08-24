@@ -393,7 +393,7 @@ minetest.register_node("monorail:cart_detector_on", {
 	tiles ={"monorail_cart_detector.png"},
 	is_ground_content = true,
 	groups = {cracky=3, mesecon=2},
-	drop = 'monorail:cart_detector 1',
+	drop = 'monorail:cart_detector_off 1',
 	mesecons = { receptor = {
 					state = "on"
 					} }
@@ -416,7 +416,7 @@ minetest.register_node("monorail:cart_detector_off", {
 	tiles ={"monorail_cart_detector.png"},
 	is_ground_content = true,
 	groups = {cracky=3, mesecon=2},
-	drop = 'monorail:cart_detector 1',
+	drop = 'monorail:cart_detector_off 1',
 	mesecons = { receptor = {
 					state = "off"
 					} }
